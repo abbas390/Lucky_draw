@@ -11,56 +11,67 @@ header h1{color:#ffd700;font-size:2.5rem;margin-bottom:5px;}
 header p{opacity:.8;font-size:1rem;}
 .container{max-width:900px;margin:auto;padding:20px;}
 .card{background:rgba(255,255,255,0.05);padding:25px;border-radius:20px;margin-bottom:25px;box-shadow:0 10px 30px rgba(0,0,0,0.5);}
-input,button{padding:12px;border-radius:12px;border:none;font-size:1rem;}
-input{width:100%;margin-bottom:10px;}
+input,button,select{padding:12px;border-radius:12px;border:none;font-size:1rem;margin-bottom:10px;}
+input,select{width:100%;}
 button{cursor:pointer;background:linear-gradient(135deg,#ffd700,#ffea00);color:#000;font-weight:bold;}
 button:hover{opacity:.9}
 .total{text-align:center;color:#00ffd5;font-weight:600;margin-bottom:10px;}
 .ticket-box{margin-top:15px;background:linear-gradient(135deg,#ffd700,#ffb700);padding:15px;border-radius:15px;display:none;}
 .ticket-box h3{margin:5px 0;}
-.whatsapp{display:inline-block;margin-top:10px;padding:10px 18px;background:#25D366;color:#fff;text-decoration:none;border-radius:10px;font-weight:600;}
+.whatsapp{display:inline-block;margin-top:10px;padding:10px 18px;background:#25D366;color:#fff;text-decoration:none;border-radius:10px;font-weight:600;margin-right:10px;}
 footer{text-align:center;padding:20px;font-size:0.9rem;opacity:0.8;}
+button:disabled{opacity:0.5;cursor:not-allowed;}
 </style>
 </head>
 <body>
 <header>
 <h1>🎟 Rs 10 Lucky Draw</h1>
-<p>Request tickets, upload payment screenshot, admin confirms, and get your tickets!</p>
+<p>Buy tickets via Easypaisa, JazzCash, or Nayapay and get your lucky numbers!</p>
 </header>
 
 <div class="container">
-  <!-- Request Tickets -->
   <div class="card">
-    <h2>Request Tickets</h2>
+    <h2>Buy Tickets / Search Entries</h2>
     <input id="name" type="text" placeholder="Full Name">
     <input id="phone" type="tel" placeholder="WhatsApp Number">
     <input id="tickets" type="number" placeholder="Number of Tickets" min="1">
     <div class="total" id="total">Total: Rs 0</div>
-    <input type="file" id="paymentScreenshot" accept="image/*">
-    <button id="requestBtn">Request Tickets</button>
+
+    <select id="paymentMethod">
+      <option value="">Select Payment Method</option>
+      <option value="Easypaisa">Easypaisa</option>
+      <option value="JazzCash">JazzCash</option>
+      <option value="Nayapay">Nayapay</option>
+    </select>
+    
+    <div id="paymentInfo" style="margin-bottom:10px;"></div>
+
+    <button id="paymentProofBtn">Send Payment Proof via WhatsApp</button>
+    <button id="generateBtn" disabled>Generate Tickets</button>
     <p id="statusMsg" style="color:#00ffd5;font-weight:600;"></p>
+
+    <h3>Search My Tickets</h3>
+    <input id="searchPhone" type="tel" placeholder="Enter WhatsApp Number to Search">
+    <button id="searchBtn">Search</button>
+
     <div class="ticket-box" id="ticketBox">
       <h3>Your Tickets</h3>
       <p><strong>Name:</strong> <span id="tName"></span></p>
       <p><strong>WhatsApp:</strong> <span id="tPhone"></span></p>
       <p><strong>Tickets:</strong> <span id="tIds"></span></p>
-      <a class="whatsapp" href="https://wa.me/923278568763" target="_blank">Contact Organizer</a>
+      <a class="whatsapp" href="https://wa.me/+923278568763" target="_blank">Contact Organizer</a>
+      <a class="whatsapp" id="shareWhatsApp" target="_blank">Share Payment on WhatsApp</a>
     </div>
-  </div>
-
-  <!-- Check Tickets -->
-  <div class="card">
-    <h2>Check Tickets</h2>
-    <input id="checkPhone" type="tel" placeholder="Enter WhatsApp Number">
-    <button id="checkBtn">Check</button>
-    <div class="ticket-box" id="checkResults" style="display:none;"></div>
   </div>
 </div>
 
 <footer>© 2025 Lucky Draw. All Rights Reserved.</footer>
 
 <script>
-// Calculate total
+let ticketsData = JSON.parse(localStorage.getItem('luckyDrawTickets') || '{}');
+let paymentConfirmed = {}; // Track if payment proof clicked
+
+// Update total
 const ticketsInput = document.getElementById('tickets');
 const totalDisplay = document.getElementById('total');
 ticketsInput.addEventListener('input',()=>{
@@ -68,87 +79,94 @@ ticketsInput.addEventListener('input',()=>{
   totalDisplay.textContent='Total: Rs '+(val*10);
 });
 
-// GitHub repo details
-const repoOwner = 'YOUR_GITHUB_USERNAME';
-const repoName = 'YOUR_REPO_NAME';
-const filePath = 'entries.json';
-const branch = 'main';
-const githubToken = 'YOUR_PERSONAL_ACCESS_TOKEN'; // ⚠️ Sensitive! Avoid exposing in public HTML
+// Payment info
+const paymentMethod = document.getElementById('paymentMethod');
+const paymentInfo = document.getElementById('paymentInfo');
+const paymentNumber = '+923409909351';
+paymentMethod.addEventListener('change',()=>{
+  if(paymentMethod.value){
+    paymentInfo.innerHTML=`Send payment via <strong>${paymentMethod.value}</strong> to number: <strong>${paymentNumber}</strong>`;
+  } else paymentInfo.innerHTML='';
+});
 
-// Helper: Generate random tickets
+// Generate random tickets
 function generateTickets(count){
   let arr=[];
   for(let i=0;i<count;i++) arr.push('T'+Math.floor(100000+Math.random()*900000));
   return arr;
 }
 
-// Request tickets (user uploads screenshot)
-document.getElementById('requestBtn').addEventListener('click', async()=>{
-  const name = document.getElementById('name').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const count = Number(document.getElementById('tickets').value);
-  const screenshot = document.getElementById('paymentScreenshot').files[0];
+// Show tickets
+function showTickets(data, phone){
+  document.getElementById('tName').textContent = data.name;
+  document.getElementById('tPhone').textContent = phone;
+  document.getElementById('tIds').textContent = data.tickets.join(', ');
+  document.getElementById('ticketBox').style.display='block';
 
-  if(!name || !phone || !count || !screenshot){
-    alert('Please enter all fields and upload screenshot');
+  const msg = `I have sent payment via ${data.method} for Lucky Draw. Name: ${data.name}, Tickets: ${data.tickets.length}.`;
+  document.getElementById('shareWhatsApp').href=`https://wa.me/${paymentNumber}?text=${encodeURIComponent(msg)}`;
+  document.getElementById('shareWhatsApp').textContent='Share Payment on WhatsApp';
+}
+
+// Payment Proof button
+document.getElementById('paymentProofBtn').addEventListener('click',()=>{
+  const name=document.getElementById('name').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const count=Number(document.getElementById('tickets').value);
+  const method=document.getElementById('paymentMethod').value;
+
+  if(!name || !phone || !count || !method){
+    alert('Please fill all fields and select payment method');
     return;
   }
 
-  document.getElementById('statusMsg').textContent='Request sent. Wait for admin confirmation.';
+  // Open WhatsApp with pre-filled message
+  const msg = `I have sent payment via ${method} for Lucky Draw. Name: ${name}, Tickets: ${count}. Please attach payment screenshot.`;
+  window.open(`https://wa.me/${paymentNumber}?text=${encodeURIComponent(msg)}`, '_blank');
 
-  // Fetch current entries.json
-  let entriesRes = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`);
-  let entriesData = await entriesRes.json();
-  const sha = entriesData.sha;
-  const content = JSON.parse(atob(entriesData.content));
-
-  // Add new request
-  if(!content[phone]) content[phone]={name:name,tickets:[],paid:false};
-  content[phone].requestedTickets = count;
-  content[phone].paymentScreenshot = screenshot.name;
-
-  // Update GitHub via API
-  await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`,{
-    method:'PUT',
-    headers:{
-      'Authorization':'token '+githubToken,
-      'Content-Type':'application/json'
-    },
-    body:JSON.stringify({
-      message:`User ${phone} requested tickets`,
-      content:btoa(JSON.stringify(content,null,2)),
-      sha:sha,
-      branch:branch
-    })
-  });
-
-  alert('Request sent successfully.');
+  // Enable generate tickets button
+  paymentConfirmed[phone] = true;
+  document.getElementById('generateBtn').disabled = false;
+  document.getElementById('statusMsg').textContent='Payment proof sent! Now click "Generate Tickets".';
 });
 
-// Check tickets after admin confirms payment
-document.getElementById('checkBtn').addEventListener('click', async()=>{
-  const phone = document.getElementById('checkPhone').value.trim();
-  if(!phone){ alert('Enter number'); return; }
+// Generate Tickets button
+document.getElementById('generateBtn').addEventListener('click',()=>{
+  const name=document.getElementById('name').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const count=Number(document.getElementById('tickets').value);
+  const method=document.getElementById('paymentMethod').value;
 
-  const resultBox = document.getElementById('checkResults');
-
-  // Fetch entries.json
-  let entriesRes = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`);
-  let entriesData = await entriesRes.json();
-  const content = JSON.parse(atob(entriesData.content));
-
-  if(content[phone] && content[phone].paid){
-    // Generate tickets if not already
-    if(content[phone].tickets.length === 0 && content[phone].requestedTickets){
-      content[phone].tickets = generateTickets(content[phone].requestedTickets);
-      content[phone].requestedTickets = 0;
-      // ⚠️ Optionally, update GitHub again here
-    }
-    resultBox.innerHTML=`<h3>Tickets for ${content[phone].name}</h3><p>${content[phone].tickets.join(', ')}</p>`;
-  }else{
-    resultBox.innerHTML=`<p>Payment not confirmed or no tickets requested yet.</p>`;
+  if(!paymentConfirmed[phone]){
+    alert('Please send payment proof first!');
+    return;
   }
-  resultBox.style.display='block';
+
+  if(ticketsData[phone]){
+    alert('Tickets already generated for this number!');
+    showTickets(ticketsData[phone], phone);
+    return;
+  }
+
+  const tickets = generateTickets(count);
+  ticketsData[phone] = {name, tickets, method};
+  localStorage.setItem('luckyDrawTickets', JSON.stringify(ticketsData));
+
+  showTickets(ticketsData[phone], phone);
+
+  document.getElementById('statusMsg').textContent='Tickets generated successfully!';
+  document.getElementById('generateBtn').disabled = true; // Disable again to prevent duplicate
+});
+
+// Search tickets
+document.getElementById('searchBtn').addEventListener('click',()=>{
+  const phone = document.getElementById('searchPhone').value.trim();
+  if(!phone){ alert('Enter WhatsApp number to search'); return; }
+  if(ticketsData[phone]){
+    showTickets(ticketsData[phone], phone);
+  } else {
+    alert('No tickets found for this number.');
+  }
 });
 </script>
 </body>
