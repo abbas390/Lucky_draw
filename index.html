@@ -20,6 +20,7 @@ button:hover {opacity:.9;}
 .ticket-box h3 {margin:5px 0;}
 .whatsapp {display:inline-block; margin-top:10px; padding:10px 18px; background:#25D366; color:#fff; text-decoration:none; border-radius:10px; font-weight:600; margin-right:10px;}
 footer {text-align:center; padding:20px; font-size:0.9rem; opacity:0.8;}
+.confirmBtn {background:#00ffd5;color:#000;margin-top:10px;}
 </style>
 </head>
 <body>
@@ -45,7 +46,7 @@ footer {text-align:center; padding:20px; font-size:0.9rem; opacity:0.8;}
     
     <div id="paymentInfo" style="margin-bottom:10px;"></div>
 
-    <button id="payBtn">Send Payment via WhatsApp & Confirm Tickets</button>
+    <button id="payBtn">Send Payment via WhatsApp</button>
     <p id="statusMsg" style="color:#00ffd5;font-weight:600;"></p>
 
     <div class="ticket-box" id="ticketBox">
@@ -53,10 +54,10 @@ footer {text-align:center; padding:20px; font-size:0.9rem; opacity:0.8;}
       <p><strong>Name:</strong> <span id="tName"></span></p>
       <p><strong>WhatsApp:</strong> <span id="tPhone"></span></p>
       <p><strong>Tickets:</strong> <span id="tIds"></span></p>
-      <a class="whatsapp" id="shareWhatsApp" target="_blank">Share Payment on WhatsApp</a>
     </div>
 
     <button id="contactOrganizer">Contact Organizer on WhatsApp</button>
+    <button id="confirmTicketsBtn" class="confirmBtn">Confirm Tickets (Organizer Only)</button>
     <p style="margin-top:10px;font-size:0.9rem;opacity:0.8;">Everyone will receive rewards through online banking app.</p>
   </div>
 </div>
@@ -72,7 +73,7 @@ const paymentNumbers = {
 };
 
 // Organizer WhatsApp
-const organizerNumber = '923409909351'; // Your WhatsApp number with country code
+const organizerNumber = '923409909351'; // WhatsApp number with country code
 
 // Update total
 const ticketsInput = document.getElementById('tickets');
@@ -98,7 +99,7 @@ document.getElementById('contactOrganizer').addEventListener('click',()=>{
     window.open(waURL,'_blank');
 });
 
-// Handle payment & confirm tickets
+// Handle payment (just send WhatsApp, no ticket shown yet)
 document.getElementById('payBtn').addEventListener('click',()=>{
   const name = document.getElementById('name').value.trim();
   const phone = document.getElementById('phone').value.trim();
@@ -110,22 +111,29 @@ document.getElementById('payBtn').addEventListener('click',()=>{
     return;
   }
 
-  // Show ticket box with count only
-  document.getElementById('ticketBox').style.display = 'block';
-  document.getElementById('tName').textContent = name;
-  document.getElementById('tPhone').textContent = phone;
-  document.getElementById('tIds').textContent = `${count} tickets purchased`;
-
-  // Pre-fill WhatsApp message to organizer
   const msg = `Payment Confirmation:\nName: ${name}\nWhatsApp: ${phone}\nTickets: ${count}\nPayment via: ${method} (${paymentNumbers[method].holder})\nPlease check the screenshot attached.`;
   const waURL = `https://wa.me/${organizerNumber}?text=${encodeURIComponent(msg)}`;
-  document.getElementById('shareWhatsApp').href = waURL;
-  document.getElementById('shareWhatsApp').textContent = 'Send Payment Confirmation on WhatsApp';
+  window.open(waURL,'_blank');
 
-  // Open WhatsApp automatically
-  window.open(waURL, '_blank');
+  document.getElementById('statusMsg').textContent='Please send payment screenshot via WhatsApp. Tickets will be confirmed after payment is received.';
+});
 
-  document.getElementById('statusMsg').textContent='Tickets confirmed! Please send payment screenshot via WhatsApp.';
+// Confirm tickets (organizer manually triggers)
+document.getElementById('confirmTicketsBtn').addEventListener('click',()=>{
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const count = Number(document.getElementById('tickets').value);
+
+  if(!name || !phone || !count){
+    alert('Cannot confirm tickets. Missing data.');
+    return;
+  }
+
+  document.getElementById('ticketBox').style.display='block';
+  document.getElementById('tName').textContent=name;
+  document.getElementById('tPhone').textContent=phone;
+  document.getElementById('tIds').textContent=`${count} tickets purchased`;
+  document.getElementById('statusMsg').textContent='Tickets confirmed! 🎉';
 });
 </script>
 </body>
