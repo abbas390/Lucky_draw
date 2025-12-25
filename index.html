@@ -1,601 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Word Imposter Game - Detective Edition</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Roboto:wght@400;700&display=swap');
-    :root {
-      --primary: #2c3e50;
-      --secondary: #34495e;
-      --accent: #e74c3c;
-      --text-light: #ecf0f1;
-      --card-bg: rgba(44, 62, 80, 0.95);
-      --shadow-dark: rgba(0, 0, 0, 0.7);
-    }
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(rgba(26,26,26,0.85), rgba(26,26,26,0.85)), url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
-      background-size: cover;
-      color: var(--text-light);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 40px 20px 60px;
-      perspective: 1500px;
-    }
-    h1, h2, h3, h4 {
-      font-family: 'Special Elite', cursive;
-      margin-bottom: 15px;
-      text-shadow: 2px 2px 5px var(--shadow-dark);
-      user-select: none;
-    }
-    h1 { font-size: 3rem; color: var(--accent); letter-spacing: 3px; margin-bottom: 30px; }
-    .card {
-      background: var(--card-bg);
-      border-radius: 20px;
-      box-shadow: 0 20px 40px var(--shadow-dark), inset 0 0 20px rgba(255,255,255,0.05);
-      max-width: 460px; width: 100%;
-      padding: 30px 30px 40px; text-align: center;
-      backdrop-filter: blur(8px); color: var(--text-light);
-      transform-style: preserve-3d;
-      transition: transform 0.4s, box-shadow 0.4s;
-      margin-bottom: 40px; border: 2px solid transparent;
-      user-select: none;
-    }
-    .card.tilt { will-change: transform; }
-    .card:hover { cursor: pointer; }
-    button {
-      background: var(--accent); border: none; border-radius: 12px;
-      padding: 14px 28px; font-weight: 700; color: var(--text-light);
-      font-size: 18px; margin: 15px 10px 0 10px;
-      box-shadow: 0 6px 15px rgba(231,76,60,0.6);
-      cursor: pointer; transition: background 0.3s, transform 0.3s;
-      user-select: none; min-width: 130px;
-    }
-    button:hover { background: #c0392b; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(192,57,43,0.8);}
-    button:active { transform: translateY(0); box-shadow: 0 6px 15px rgba(231,76,60,0.6);}
-    input[type="number"], input[type="text"], select, textarea {
-      width: 85%; padding: 14px 18px; margin-top: 15px; border-radius: 12px; border: none;
-      font-size: 18px; font-weight: 600; box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
-      outline: none; transition: box-shadow 0.3s; background: #2c3e50; color: var(--text-light);
-      user-select: text; resize: vertical;
-    }
-    input[type="number"]:focus, input[type="text"]:focus, select:focus, textarea:focus {
-      box-shadow: 0 0 12px var(--accent); background: #34495e;
-    }
-    #wordCard {
-      margin-top: 25px; font-size: 28px; padding: 25px;
-      background: rgba(255,255,255,0.1); border-radius: 18px; border: 3px dashed var(--accent);
-      box-shadow: 0 8px 20px rgba(231,76,60,0.5); display: none; user-select: none;
-      min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      color: var(--accent); font-weight: 700; letter-spacing: 1.5px; text-shadow: 1px 1px 6px var(--shadow-dark);
-      opacity: 0; transition: opacity 0.6s;
-    }
-    #wordCard.visible { opacity: 1; }
-    #wordText { margin-bottom: 15px; font-size: 2.5rem; font-family: 'Special Elite', cursive; }
-    #wordImage { max-width: 140px; max-height: 140px; border-radius: 15px; box-shadow: 0 6px 15px rgba(231,76,60,0.7); user-select: none; object-fit: contain; }
-    #nextBtn { display: none; margin-top: 30px; min-width: 140px; }
-    .hidden { display: none !important; }
-    #scoreBoard { font-size: 20px; color: var(--accent); font-weight: 700; letter-spacing: 1.2px; text-shadow: 1px 1px 4px var(--shadow-dark); user-select: none; margin-bottom: 20px; }
-    #categoryMenu select { margin-bottom: 10px; }
-    #categoryImages { display: flex; justify-content: space-around; margin-top: 15px; flex-wrap: wrap; gap: 15px; }
-    #categoryImages img {
-      width: 70px; height: 70px; border-radius: 12px; border: 2px solid transparent;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: border-color 0.3s, transform 0.3s;
-      cursor: pointer; object-fit: cover; user-select: none;
-    }
-    #categoryImages img.selected { border-color: var(--accent); transform: scale(1.1); box-shadow: 0 6px 20px var(--accent);}
-    .instruction { font-style: italic; font-size: 1rem; color: #ddd; margin-top: 10px; user-select: none;}
-    #timer { font-size: 1.6rem; font-weight: 700; color: var(--accent); margin: 15px 0 0; user-select: none;}
-    #playerScores { margin-top: 20px; text-align: left; max-width: 460px; width: 100%; color: var(--text-light);}
-    #playerScores h3 { margin-bottom: 10px;}
-    #playerScores ul { list-style: none; padding-left: 0; margin: 0;}
-    #playerScores li { padding: 6px 10px; background: rgba(255,255,255,0.1); margin-bottom: 6px; border-radius: 8px; font-weight: 600;}
-    #customWordsArea { width: 85%; height: 100px; margin-top: 10px; font-family: monospace; font-size: 14px; background: #2c3e50; color: var(--text-light); border-radius: 12px; border: none; padding: 10px; resize: vertical;}
-    @media (max-width: 520px) {
-      .card { max-width: 90vw; padding: 25px 20px 30px;}
-      #wordText { font-size: 2rem;}
-      button { font-size: 16px; padding: 12px 22px; min-width: 110px;}
-      #wordImage { max-width: 120px; max-height: 120px;}
-      #playerScores { font-size: 14px;}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rs 10 Lucky Draw</title>
+<style>
+body{margin:0;font-family:'Segoe UI',Tahoma,sans-serif;background:radial-gradient(circle at top,#1a2a3a,#0b141e 70%);color:#fff;}
+header{padding:30px;text-align:center;}
+header h1{color:#ffd700;font-size:2.5rem;margin-bottom:5px;}
+header p{opacity:.8;font-size:1rem;}
+.container{max-width:900px;margin:auto;padding:20px;}
+.card{background:rgba(255,255,255,0.05);padding:25px;border-radius:20px;margin-bottom:25px;box-shadow:0 10px 30px rgba(0,0,0,0.5);}
+input,button{padding:12px;border-radius:12px;border:none;font-size:1rem;}
+input{width:100%;margin-bottom:10px;}
+button{cursor:pointer;background:linear-gradient(135deg,#ffd700,#ffea00);color:#000;font-weight:bold;}
+button:hover{opacity:.9}
+.total{text-align:center;color:#00ffd5;font-weight:600;margin-bottom:10px;}
+.ticket-box{margin-top:15px;background:linear-gradient(135deg,#ffd700,#ffb700);padding:15px;border-radius:15px;display:none;}
+.ticket-box h3{margin:5px 0;}
+.whatsapp{display:inline-block;margin-top:10px;padding:10px 18px;background:#25D366;color:#fff;text-decoration:none;border-radius:10px;font-weight:600;}
+footer{text-align:center;padding:20px;font-size:0.9rem;opacity:0.8;}
+</style>
 </head>
 <body>
-<h1>?? Word Imposter Game</h1>
-<div id="scoreBoard" aria-live="polite" aria-atomic="true">Games Played: <span id="gamesPlayed">0</span></div>
-<div id="mainMenu" class="card tilt" tabindex="0" aria-label="Main Menu">
-  <h2>Welcome Detective!</h2>
-  <p class="instruction">Uncover the imposter by guessing the odd word out.</p>
-  <button id="playBtn" aria-label="Play Game">Play</button>
-  <button id="optionsBtn" aria-label="Game Options">Options</button>
-  <button id="exitBtn" aria-label="Exit Game">Exit</button>
-</div>
-<div id="categoryMenu" class="card tilt hidden" tabindex="0" aria-label="Select Category">
-  <h3>Select Category</h3>
-  <select id="category" aria-describedby="categoryHint" aria-label="Category Dropdown" tabindex="0">
-    <option value="food">Food</option>
-    <option value="animals">Animals</option>
-    <option value="places">Places</option>
-    <option value="movies">Movies</option>
-    <option value="actors">Actors</option>
-  </select>
-  <p id="categoryHint" class="instruction">Choose a category to start your investigation.</p>
-  <div id="categoryImages" aria-hidden="true">
-    <img src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png" alt="Food" data-value="food" tabindex="0" />
-    <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Animals" data-value="animals" tabindex="0" />
-    <img src="https://cdn-icons-png.flaticon.com/512/854/854894.png" alt="Places" data-value="places" tabindex="0" />
-    <img src="https://upload.wikimedia.org/wikipedia/en/f/f9/TheAvengers2012Poster.jpg" alt="Movies" data-value="movies" tabindex="0" />
-    <img src="https://upload.wikimedia.org/wikipedia/commons/0/0c/Brad_Pitt_2019.jpg" alt="Actors" data-value="actors" tabindex="0" />
+<header>
+<h1>🎟 Rs 10 Lucky Draw</h1>
+<p>Request tickets, upload payment screenshot, admin confirms, and get your tickets!</p>
+</header>
+
+<div class="container">
+  <!-- Request Tickets -->
+  <div class="card">
+    <h2>Request Tickets</h2>
+    <input id="name" type="text" placeholder="Full Name">
+    <input id="phone" type="tel" placeholder="WhatsApp Number">
+    <input id="tickets" type="number" placeholder="Number of Tickets" min="1">
+    <div class="total" id="total">Total: Rs 0</div>
+    <input type="file" id="paymentScreenshot" accept="image/*">
+    <button id="requestBtn">Request Tickets</button>
+    <p id="statusMsg" style="color:#00ffd5;font-weight:600;"></p>
+    <div class="ticket-box" id="ticketBox">
+      <h3>Your Tickets</h3>
+      <p><strong>Name:</strong> <span id="tName"></span></p>
+      <p><strong>WhatsApp:</strong> <span id="tPhone"></span></p>
+      <p><strong>Tickets:</strong> <span id="tIds"></span></p>
+      <a class="whatsapp" href="https://wa.me/923278568763" target="_blank">Contact Organizer</a>
+    </div>
   </div>
-  <button id="continueCategoryBtn" aria-label="Continue to Setup">Continue</button>
-  <button id="backToMainFromCategory" aria-label="Back to Main Menu">Back</button>
-</div>
-<div id="optionsMenu" class="card tilt hidden" tabindex="0" aria-label="Game Options">
-  <h3>Options</h3>
-  <label for="difficulty">Difficulty Level:</label><br />
-  <select id="difficulty" aria-label="Select Difficulty" tabindex="0">
-    <option value="easy">Easy - More clues, simpler words</option>
-    <option value="medium" selected>Medium - Balanced challenge</option>
-    <option value="hard">Hard - Less clues, harder words</option>
-  </select>
-  <p class="instruction">Choose your challenge level to test your detective skills.</p>
-  <h4>Custom Word Pairs (Optional)</h4>
-  <p class="instruction">Add your own word pairs here, one pair per line, separated by a comma.<br>
-    Example:<br>
-    Cat,Dog<br>
-    Cake,Pie
-  </p>
-  <textarea id="customWordsArea" placeholder="Word1,Word2"></textarea>
-  <button id="saveCustomWordsBtn" aria-label="Save Custom Words">Save Custom Words</button>
-  <button id="backToMainFromOptions" aria-label="Back to Main Menu">Back</button>
-</div>
-<div id="setupCard" class="card tilt hidden" tabindex="0" aria-label="Game Setup">
-  <h3>Game Setup</h3>
-  <p>Enter player names (minimum 3 players):</p>
-  <textarea id="playerNames" placeholder="Enter one name per line (or type a number to auto-generate names)" rows="5" aria-label="Player Names"></textarea>
-  <p class="instruction">Example: <br> Alice<br> Bob<br> Charlie</p>
-  <button id="startGameBtn" aria-label="Start Game">Start Game</button>
-  <button id="backToMainFromSetup" aria-label="Back to Main Menu">Back to Menu</button>
-</div>
-<div id="gameCard" class="card tilt hidden" tabindex="0" aria-live="polite" aria-label="Game Play">
-  <h2>Player <span id="playerNameDisplay"></span>'s Turn</h2>
-  <p class="instruction">Click "Reveal My Word" and memorize it. Then pass the device to the next player.</p>
-  <button id="revealWordBtn" aria-label="Reveal Word">Reveal My Word</button>
-  <div id="wordCard" role="region" aria-live="assertive" aria-atomic="true">
-    <div id="wordText"></div>
-    <img id="wordImage" src="" alt="" />
+
+  <!-- Check Tickets -->
+  <div class="card">
+    <h2>Check Tickets</h2>
+    <input id="checkPhone" type="tel" placeholder="Enter WhatsApp Number">
+    <button id="checkBtn">Check</button>
+    <div class="ticket-box" id="checkResults" style="display:none;"></div>
   </div>
-  <button id="nextBtn" aria-label="Next Player">Next Player</button>
-  <div id="timer" aria-live="polite" aria-atomic="true"></div>
 </div>
-<div id="discussionCard" class="card tilt hidden" tabindex="0" aria-label="Discussion and Voting">
-  <h3>Discussion & Voting</h3>
-  <p class="instruction">Discuss who you think the imposter is. When ready, vote below.</p>
-  <div id="playerVotes"></div>
-  <button id="startVotingBtn" aria-label="Start Voting">Start Voting</button>
-  <button id="endDiscussionBtn" class="hidden" aria-label="End Discussion">End Discussion</button>
-  <div id="discussionTimer" aria-live="polite" aria-atomic="true"></div>
-</div>
-<div id="resultsCard" class="card tilt hidden" tabindex="0" aria-label="Game Results">
-  <h3>Game Results</h3>
-  <div id="resultsText"></div>
-  <button id="playAgainBtn" aria-label="Play Again">Play Again</button>
-  <button id="exitAfterResultsBtn" aria-label="Exit Game">Exit</button>
-</div>
-<div id="playerScores" class="hidden" aria-live="polite" aria-atomic="true">
-  <h3>Player Scores</h3>
-  <ul id="scoresList"></ul>
-</div>
+
+<footer>© 2025 Lucky Draw. All Rights Reserved.</footer>
+
 <script>
-const defaultWordLibrary = {
-  food: [["Pizza", "Burger"], ["Apple", "Banana"], ["Cake", "Pie"]],
-  animals: [["Tiger", "Lion"], ["Cat", "Dog"], ["Dolphin", "Whale"]],
-  places: [["Hospital", "Hotel"], ["Airport", "Train Station"], ["School", "Library"]],
-  movies: [["Batman", "Spiderman"], ["Avengers", "Justice League"], ["Inception", "Interstellar"]],
-  actors: [["Tom Cruise", "Brad Pitt"], ["Leonardo DiCaprio", "Johnny Depp"], ["Emma Watson", "Scarlett Johansson"]]
-};
-const wordImages = {
-  "Pizza": "https://cdn-icons-png.flaticon.com/512/3132/3132693.png",
-  "Burger": "https://cdn-icons-png.flaticon.com/512/1046/1046784.png",
-  "Apple": "https://cdn-icons-png.flaticon.com/512/415/415733.png",
-  "Banana": "https://cdn-icons-png.flaticon.com/512/415/415743.png",
-  "Cake": "https://cdn-icons-png.flaticon.com/512/2738/2738748.png",
-  "Pie": "https://cdn-icons-png.flaticon.com/512/706/706830.png",
-  "Tiger": "https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger.50.jpg",
-  "Lion": "https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_waiting_in_Namibia.jpg",
-  "Cat": "https://cdn-icons-png.flaticon.com/512/616/616408.png",
-  "Dog": "https://cdn-icons-png.flaticon.com/512/616/616408.png",
-  "Dolphin": "https://upload.wikimedia.org/wikipedia/commons/4/49/Common_dolphin.jpg",
-  "Whale": "https://upload.wikimedia.org/wikipedia/commons/5/55/Humpback_Whale_underwater_shot.jpg",
-  "Hospital": "https://cdn-icons-png.flaticon.com/512/2965/2965567.png",
-  "Hotel": "https://cdn-icons-png.flaticon.com/512/2972/2972472.png",
-  "Airport": "https://cdn-icons-png.flaticon.com/512/187/187292.png",
-  "Train Station": "https://cdn-icons-png.flaticon.com/512/854/854894.png",
-  "School": "https://cdn-icons-png.flaticon.com/512/2965/2965567.png",
-  "Library": "https://cdn-icons-png.flaticon.com/512/3039/3039431.png",
-  "Batman": "https://upload.wikimedia.org/wikipedia/en/8/8a/Batman_BenAffleck.jpg",
-  "Spiderman": "https://upload.wikimedia.org/wikipedia/en/0/0c/Spiderman50.jpg",
-  "Avengers": "https://upload.wikimedia.org/wikipedia/en/f/f9/TheAvengers2012Poster.jpg",
-  "Justice League": "https://upload.wikimedia.org/wikipedia/en/3/31/Justice_League_film_poster.jpg",
-  "Inception": "https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg",
-  "Interstellar": "https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg",
-  "Tom Cruise": "https://upload.wikimedia.org/wikipedia/commons/2/26/Tom_Cruise_by_Gage_Skidmore_2.jpg",
-  "Brad Pitt": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Brad_Pitt_2019.jpg",
-  "Leonardo DiCaprio": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Leonardo_DiCaprio_66�me_Festival_de_Venise_%28Mostra%29.jpg",
-  "Johnny Depp": "https://upload.wikimedia.org/wikipedia/commons/f/f0/Johnny_Depp_2020.jpg",
-  "Emma Watson": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Emma_Watson_2013.jpg",
-  "Scarlett Johansson": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Scarlett_Johansson_C%C3%A9sars_2014.jpg"
-};
-let wordLibrary = JSON.parse(JSON.stringify(defaultWordLibrary));
-let totalPlayers = 0, currentPlayerIndex = 0, imposterIndex = 0, selectedPair = [],
-    gamesPlayed = 0, selectedCategory = "food", players = [], scores = {}, difficulty = "medium",
-    timerInterval = null, timerSeconds = 20, discussionTimerInterval = null, discussionTime = 60, gamePhase = "setup";
-const mainMenu = document.getElementById("mainMenu"),
-      categoryMenu = document.getElementById("categoryMenu"),
-      optionsMenu = document.getElementById("optionsMenu"),
-      setupCard = document.getElementById("setupCard"),
-      gameCard = document.getElementById("gameCard"),
-      wordCard = document.getElementById("wordCard"),
-      wordText = document.getElementById("wordText"),
-      wordImage = document.getElementById("wordImage"),
-      nextBtn = document.getElementById("nextBtn"),
-      playerNameDisplay = document.getElementById("playerNameDisplay"),
-      gamesPlayedSpan = document.getElementById("gamesPlayed"),
-      categorySelect = document.getElementById("category"),
-      categoryImages = document.querySelectorAll("#categoryImages img"),
-      difficultySelect = document.getElementById("difficulty"),
-      customWordsArea = document.getElementById("customWordsArea"),
-      playerNamesArea = document.getElementById("playerNames"),
-      timerDisplay = document.getElementById("timer"),
-      playerScoresDiv = document.getElementById("playerScores"),
-      scoresList = document.getElementById("scoresList"),
-      discussionCard = document.getElementById("discussionCard"),
-      playerVotesDiv = document.getElementById("playerVotes"),
-      discussionTimerDisplay = document.getElementById("discussionTimer"),
-      resultsCard = document.getElementById("resultsCard"),
-      resultsText = document.getElementById("resultsText");
-const sounds = {
-  button: new Audio('https://freesound.org/data/previews/256/256113_3263906-lq.mp3'),
-  reveal: new Audio('https://freesound.org/data/previews/331/331912_3248244-lq.mp3'),
-  timerTick: new Audio('https://freesound.org/data/previews/331/331912_3248244-lq.mp3'),
-  timerEnd: new Audio('https://freesound.org/data/previews/331/331912_3248244-lq.mp3')
-};
-function playSound(name) {
-  if (sounds[name]) {
-    sounds[name].currentTime = 0;
-    sounds[name].play().catch(() => {});
-  }
-}
-// 3D tilt effect
-document.querySelectorAll('.card.tilt').forEach(card => {
-  card.addEventListener('mousemove', e => {
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    const rotateX = (-y / (rect.height / 2)) * 8;
-    const rotateY = (x / (rect.width / 2)) * 8;
-    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
-  });
-  card.addEventListener('mouseleave', () => {
-    card.style.transform = '';
-  });
+// Calculate total
+const ticketsInput = document.getElementById('tickets');
+const totalDisplay = document.getElementById('total');
+ticketsInput.addEventListener('input',()=>{
+  const val = Number(ticketsInput.value)||0;
+  totalDisplay.textContent='Total: Rs '+(val*10);
 });
-// Background cycling
-const backgrounds = [
-  'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1470&q=80',
-  'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80',
-  'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1470&q=80'
-];
-let bgIndex = 0;
-function cycleBackground() {
-  bgIndex = (bgIndex + 1) % backgrounds.length;
-  document.body.style.backgroundImage = `linear-gradient(rgba(26,26,26,0.85), rgba(26,26,26,0.85)), url('${backgrounds[bgIndex]}')`;
+
+// GitHub repo details
+const repoOwner = 'YOUR_GITHUB_USERNAME';
+const repoName = 'YOUR_REPO_NAME';
+const filePath = 'entries.json';
+const branch = 'main';
+const githubToken = 'YOUR_PERSONAL_ACCESS_TOKEN'; // ⚠️ Sensitive! Avoid exposing in public HTML
+
+// Helper: Generate random tickets
+function generateTickets(count){
+  let arr=[];
+  for(let i=0;i<count;i++) arr.push('T'+Math.floor(100000+Math.random()*900000));
+  return arr;
 }
-setInterval(cycleBackground, 30000);
-// Category image selection
-categoryImages.forEach(img => {
-  img.addEventListener("click", () => {
-    playSound('button');
-    categoryImages.forEach(i => i.classList.remove("selected"));
-    img.classList.add("selected");
-    selectedCategory = img.dataset.value;
-    categorySelect.value = selectedCategory;
-  });
-  img.addEventListener("keydown", e => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      img.click();
-    }
-  });
-});
-categorySelect.addEventListener("change", () => {
-  selectedCategory = categorySelect.value;
-  categoryImages.forEach(img => {
-    img.classList.toggle("selected", img.dataset.value === selectedCategory);
-  });
-});
-window.addEventListener("load", () => {
-  categoryImages.forEach(img => {
-    img.classList.toggle("selected", img.dataset.value === selectedCategory);
-  });
-});
-// Utility functions
-function hideAllCards() {
-  [mainMenu, categoryMenu, optionsMenu, setupCard, gameCard, discussionCard, resultsCard, playerScoresDiv].forEach(card => card.classList.add("hidden"));
-  clearTimers();
-}
-function clearTimers() {
-  if (timerInterval) clearInterval(timerInterval);
-  if (discussionTimerInterval) clearInterval(discussionTimerInterval);
-  timerDisplay.textContent = '';
-  discussionTimerDisplay.textContent = '';
-}
-function showMainMenu() {
-  hideAllCards();
-  mainMenu.classList.remove("hidden");
-  mainMenu.focus();
-}
-function showCategorySelection() {
-  playSound('button');
-  hideAllCards();
-  categoryMenu.classList.remove("hidden");
-  categoryMenu.focus();
-}
-function showOptions() {
-  playSound('button');
-  hideAllCards();
-  optionsMenu.classList.remove("hidden");
-  optionsMenu.querySelector("select").focus();
-}
-function showSetup() {
-  playSound('button');
-  hideAllCards();
-  setupCard.classList.remove("hidden");
-  playerNamesArea.focus();
-}
-// Start the game
-function startGame() {
-  playSound('button');
-  let namesRaw = playerNamesArea.value.trim();
-  // If user entered a number, auto-generate names
-  if (/^\d+$/.test(namesRaw)) {
-    let count = parseInt(namesRaw, 10);
-    if (count < 3) {
-      alert("Minimum 3 players required.");
-      playerNamesArea.focus();
-      return;
-    }
-    players = Array.from({length: count}, (_, i) => `Player ${i+1}`);
-  } else {
-    players = namesRaw.split('\n').map(n => n.trim()).filter(n => n.length > 0);
-    if (players.length < 3) {
-      alert("Minimum 3 players required.");
-      playerNamesArea.focus();
-      return;
-    }
-  }
-  totalPlayers = players.length;
-  scores = {};
-  players.forEach(p => scores[p] = scores[p] || 0);
-  difficulty = difficultySelect.value;
-  // Use custom words if provided
-  const customWordsRaw = customWordsArea.value.trim();
-  if (customWordsRaw) {
-    const pairs = [];
-    const lines = customWordsRaw.split('\n');
-    for (const line of lines) {
-      const parts = line.split(',').map(w => w.trim());
-      if (parts.length === 2 && parts[0] && parts[1]) {
-        pairs.push(parts);
-      }
-    }
-    if (pairs.length > 0) {
-      wordLibrary[selectedCategory] = pairs;
-    } else {
-      alert("Custom word pairs format invalid. Using default words.");
-      wordLibrary[selectedCategory] = JSON.parse(JSON.stringify(defaultWordLibrary[selectedCategory]));
-    }
-  } else {
-    wordLibrary[selectedCategory] = JSON.parse(JSON.stringify(defaultWordLibrary[selectedCategory]));
-  }
-  selectedPair = wordLibrary[selectedCategory][Math.floor(Math.random() * wordLibrary[selectedCategory].length)];
-  imposterIndex = Math.floor(Math.random() * totalPlayers);
-  currentPlayerIndex = 0;
-  gamesPlayed++;
-  gamesPlayedSpan.textContent = gamesPlayed;
-  hideAllCards();
-  gameCard.classList.remove("hidden");
-  updatePlayerTurn();
-}
-function updatePlayerTurn() {
-  playerNameDisplay.textContent = players[currentPlayerIndex];
-  wordCard.classList.remove("visible");
-  wordCard.style.display = "none";
-  nextBtn.style.display = "none";
-  nextBtn.disabled = false;
-  revealWordBtn.disabled = false;
-  timerDisplay.textContent = '';
-  clearTimers();
-}
-function revealWord() {
-  playSound('reveal');
-  const word = (currentPlayerIndex === imposterIndex) ? selectedPair[1] : selectedPair[0];
-  wordText.textContent = word;
-  wordImage.src = wordImages[word] || "";
-  wordImage.alt = word;
-  wordCard.style.display = "flex";
-  setTimeout(() => wordCard.classList.add("visible"), 10);
-  nextBtn.style.display = "inline-block";
-  revealWordBtn.disabled = true;
-  startTurnTimer();
-}
-function startTurnTimer() {
-  timerSeconds = difficulty === "easy" ? 30 : difficulty === "hard" ? 15 : 20;
-  timerDisplay.textContent = `Time left: ${timerSeconds}s`;
-  timerInterval = setInterval(() => {
-    timerSeconds--;
-    timerDisplay.textContent = `Time left: ${timerSeconds}s`;
-    if (timerSeconds <= 0) {
-      clearInterval(timerInterval);
-      timerDisplay.textContent = "Time's up!";
-      nextBtn.disabled = false;
-      revealWordBtn.disabled = true;
-      playSound('timerEnd');
-    } else {
-      if (timerSeconds % 5 === 0) playSound('timerTick');
-    }
-  }, 1000);
-}
-function nextPlayer() {
-  playSound('button');
-  clearInterval(timerInterval);
-  currentPlayerIndex++;
-  if (currentPlayerIndex >= totalPlayers) {
-    startDiscussion();
+
+// Request tickets (user uploads screenshot)
+document.getElementById('requestBtn').addEventListener('click', async()=>{
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const count = Number(document.getElementById('tickets').value);
+  const screenshot = document.getElementById('paymentScreenshot').files[0];
+
+  if(!name || !phone || !count || !screenshot){
+    alert('Please enter all fields and upload screenshot');
     return;
   }
-  updatePlayerTurn();
-}
-function startDiscussion() {
-  gamePhase = "discussion";
-  hideAllCards();
-  discussionCard.classList.remove("hidden");
-  discussionTimerDisplay.textContent = '';
-  playerVotesDiv.innerHTML = '';
-  votes = {};
-  players.forEach((p, i) => {
-    const label = document.createElement('label');
-    label.style.display = 'block';
-    label.style.margin = '10px 0';
-    const radio = document.createElement('input');
-    radio.type = 'radio';
-    radio.name = 'vote';
-    radio.value = i;
-    radio.id = `vote-${i}`;
-    label.appendChild(radio);
-    label.appendChild(document.createTextNode(` ${p}`));
-    playerVotesDiv.appendChild(label);
+
+  document.getElementById('statusMsg').textContent='Request sent. Wait for admin confirmation.';
+
+  // Fetch current entries.json
+  let entriesRes = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`);
+  let entriesData = await entriesRes.json();
+  const sha = entriesData.sha;
+  const content = JSON.parse(atob(entriesData.content));
+
+  // Add new request
+  if(!content[phone]) content[phone]={name:name,tickets:[],paid:false};
+  content[phone].requestedTickets = count;
+  content[phone].paymentScreenshot = screenshot.name;
+
+  // Update GitHub via API
+  await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`,{
+    method:'PUT',
+    headers:{
+      'Authorization':'token '+githubToken,
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify({
+      message:`User ${phone} requested tickets`,
+      content:btoa(JSON.stringify(content,null,2)),
+      sha:sha,
+      branch:branch
+    })
   });
-  document.getElementById('startVotingBtn').classList.remove('hidden');
-  document.getElementById('endDiscussionBtn').classList.add('hidden');
-  discussionCard.querySelector('#startVotingBtn').focus();
-}
-document.getElementById('startVotingBtn').addEventListener('click', () => {
-  playSound('button');
-  document.getElementById('startVotingBtn').classList.add('hidden');
-  document.getElementById('endDiscussionBtn').classList.remove('hidden');
-  discussionTime = 60;
-  discussionTimerDisplay.textContent = `Discussion time left: ${discussionTime}s`;
-  discussionTimerInterval = setInterval(() => {
-    discussionTime--;
-    discussionTimerDisplay.textContent = `Discussion time left: ${discussionTime}s`;
-    if (discussionTime <= 0) {
-      clearInterval(discussionTimerInterval);
-      endDiscussion();
+
+  alert('Request sent successfully.');
+});
+
+// Check tickets after admin confirms payment
+document.getElementById('checkBtn').addEventListener('click', async()=>{
+  const phone = document.getElementById('checkPhone').value.trim();
+  if(!phone){ alert('Enter number'); return; }
+
+  const resultBox = document.getElementById('checkResults');
+
+  // Fetch entries.json
+  let entriesRes = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`);
+  let entriesData = await entriesRes.json();
+  const content = JSON.parse(atob(entriesData.content));
+
+  if(content[phone] && content[phone].paid){
+    // Generate tickets if not already
+    if(content[phone].tickets.length === 0 && content[phone].requestedTickets){
+      content[phone].tickets = generateTickets(content[phone].requestedTickets);
+      content[phone].requestedTickets = 0;
+      // ⚠️ Optionally, update GitHub again here
     }
-  }, 1000);
-});
-document.getElementById('endDiscussionBtn').addEventListener('click', () => {
-  playSound('button');
-  clearInterval(discussionTimerInterval);
-  endDiscussion();
-});
-function endDiscussion() {
-  discussionTimerDisplay.textContent = '';
-  const selectedVote = document.querySelector('input[name="vote"]:checked');
-  if (!selectedVote) {
-    alert("No vote selected! Please vote for the imposter.");
-    return;
+    resultBox.innerHTML=`<h3>Tickets for ${content[phone].name}</h3><p>${content[phone].tickets.join(', ')}</p>`;
+  }else{
+    resultBox.innerHTML=`<p>Payment not confirmed or no tickets requested yet.</p>`;
   }
-  const votedIndex = parseInt(selectedVote.value, 10);
-  const votedPlayer = players[votedIndex];
-  const imposterPlayer = players[imposterIndex];
-  let resultMessage = '';
-  if (votedIndex === imposterIndex) {
-    resultMessage = `Correct! ${votedPlayer} was the imposter.`;
-    scores[votedPlayer] += 1;
-  } else {
-    resultMessage = `Wrong! ${votedPlayer} was innocent. The imposter was ${imposterPlayer}.`;
-    scores[imposterPlayer] += 1;
-  }
-  showResults(resultMessage);
-}
-function showResults(message) {
-  gamePhase = "results";
-  hideAllCards();
-  resultsCard.classList.remove("hidden");
-  resultsText.textContent = message;
-  updateScoresDisplay();
-}
-function updateScoresDisplay() {
-  playerScoresDiv.classList.remove("hidden");
-  scoresList.innerHTML = '';
-  players.forEach(p => {
-    const li = document.createElement('li');
-    li.textContent = `${p}: ${scores[p]} point${scores[p] !== 1 ? 's' : ''}`;
-    scoresList.appendChild(li);
-  });
-}
-document.getElementById('playAgainBtn').addEventListener('click', () => {
-  playSound('button');
-  playerScoresDiv.classList.add("hidden");
-  showCategorySelection();
+  resultBox.style.display='block';
 });
-document.getElementById('exitAfterResultsBtn').addEventListener('click', () => {
-  playSound('button');
-  alert("Thanks for playing! Please close the tab manually.");
-  document.body.innerHTML = `
-    <h1 style="color:#e74c3c; text-align:center; margin-top: 40vh; font-family: 'Special Elite', cursive;">
-      Game Closed
-    </h1>
-    <p style="color:#ecf0f1; text-align:center; font-size:1.3rem;">
-      Please close this tab manually.
-    </p>
-  `;
-});
-document.querySelectorAll('button, #categoryImages img').forEach(el => {
-  el.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      el.click();
-    }
-  });
-});
-document.getElementById('playBtn').addEventListener('click', showCategorySelection);
-document.getElementById('optionsBtn').addEventListener('click', showOptions);
-document.getElementById('exitBtn').addEventListener('click', () => {
-  alert("Thanks for playing! Please close the tab manually.");
-  document.body.innerHTML = `
-    <h1 style="color:#e74c3c; text-align:center; margin-top: 40vh; font-family: 'Special Elite', cursive;">
-      Game Closed
-    </h1>
-    <p style="color:#ecf0f1; text-align:center; font-size:1.3rem;">
-      Please close this tab manually.
-    </p>
-  `;
-});
-document.getElementById('continueCategoryBtn').addEventListener('click', () => {
-  selectedCategory = categorySelect.value;
-  playSound('button');
-  showSetup();
-});
-document.getElementById('backToMainFromCategory').addEventListener('click', showMainMenu);
-document.getElementById('backToMainFromOptions').addEventListener('click', showMainMenu);
-document.getElementById('backToMainFromSetup').addEventListener('click', showMainMenu);
-document.getElementById('startGameBtn').addEventListener('click', startGame);
-const revealWordBtn = document.getElementById('revealWordBtn');
-revealWordBtn.addEventListener('click', revealWord);
-nextBtn.addEventListener('click', nextPlayer);
-document.getElementById('saveCustomWordsBtn').addEventListener('click', () => {
-  playSound('button');
-  alert("Custom words saved. They will be used when you start the game.");
-});
-showMainMenu();
 </script>
 </body>
 </html>
