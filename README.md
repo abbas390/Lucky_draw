@@ -8,3 +8,7 @@ Ticket Prices
 5 Tickets = 50 PKR
 The more tickets you buy, the higher your chances of winning.
 Thank you for participating and good luck.
+1st prize 🏆 10k pkr 
+2nd prize 🏆 5k
+26 winner will receive 1250 pkr 
+total rewards 28 
