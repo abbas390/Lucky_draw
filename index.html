@@ -5,33 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rs 10 Lucky Draw</title>
 <style>
-body{margin:0;font-family:'Segoe UI',Tahoma,sans-serif;background:radial-gradient(circle at top,#1a2a3a,#0b141e 70%);color:#fff;}
-header{padding:30px;text-align:center;}
-header h1{color:#ffd700;font-size:2.5rem;margin-bottom:5px;}
-header p{opacity:.8;font-size:1rem;}
-.container{max-width:900px;margin:auto;padding:20px;}
-.card{background:rgba(255,255,255,0.05);padding:25px;border-radius:20px;margin-bottom:25px;box-shadow:0 10px 30px rgba(0,0,0,0.5);}
-input,button,select{padding:12px;border-radius:12px;border:none;font-size:1rem;margin-bottom:10px;}
-input,select{width:100%;}
-button{cursor:pointer;background:linear-gradient(135deg,#ffd700,#ffea00);color:#000;font-weight:bold;}
-button:hover{opacity:.9}
-.total{text-align:center;color:#00ffd5;font-weight:600;margin-bottom:10px;}
-.ticket-box{margin-top:15px;background:linear-gradient(135deg,#ffd700,#ffb700);padding:15px;border-radius:15px;display:none;}
-.ticket-box h3{margin:5px 0;}
-.whatsapp{display:inline-block;margin-top:10px;padding:10px 18px;background:#25D366;color:#fff;text-decoration:none;border-radius:10px;font-weight:600;margin-right:10px;}
-footer{text-align:center;padding:20px;font-size:0.9rem;opacity:0.8;}
-button:disabled{opacity:0.5;cursor:not-allowed;}
+body {margin:0; font-family:'Segoe UI',Tahoma,sans-serif; background:radial-gradient(circle at top,#1a2a3a,#0b141e 70%); color:#fff;}
+header {padding:30px; text-align:center;}
+header h1 {color:#ffd700; font-size:2.5rem; margin-bottom:5px;}
+header p {opacity:.8; font-size:1rem;}
+.container {max-width:900px; margin:auto; padding:20px;}
+.card {background:rgba(255,255,255,0.05); padding:25px; border-radius:20px; margin-bottom:25px; box-shadow:0 10px 30px rgba(0,0,0,0.5);}
+input,button,select {padding:12px; border-radius:12px; border:none; font-size:1rem; margin-bottom:10px;}
+input,select {width:100%;}
+button {cursor:pointer; background:linear-gradient(135deg,#ffd700,#ffea00); color:#000; font-weight:bold;}
+button:hover {opacity:.9;}
+.total {text-align:center; color:#00ffd5; font-weight:600; margin-bottom:10px;}
+.ticket-box {margin-top:15px; background:linear-gradient(135deg,#ffd700,#ffb700); padding:15px; border-radius:15px; display:none;}
+.ticket-box h3 {margin:5px 0;}
+.whatsapp {display:inline-block; margin-top:10px; padding:10px 18px; background:#25D366; color:#fff; text-decoration:none; border-radius:10px; font-weight:600; margin-right:10px;}
+footer {text-align:center; padding:20px; font-size:0.9rem; opacity:0.8;}
 </style>
 </head>
 <body>
 <header>
 <h1>🎟 Rs 10 Lucky Draw</h1>
-<p>Buy tickets via Easypaisa, Nayapay, or Upaisa and get your lucky numbers!</p>
+<p>Buy tickets via Easypaisa, Upaisa, or Nayapay and get your lucky numbers!</p>
 </header>
 
 <div class="container">
   <div class="card">
-    <h2>Buy Tickets / Search Entries</h2>
+    <h2>Buy Tickets</h2>
     <input id="name" type="text" placeholder="Full Name">
     <input id="phone" type="tel" placeholder="WhatsApp Number">
     <input id="tickets" type="number" placeholder="Number of Tickets" min="1">
@@ -39,39 +38,43 @@ button:disabled{opacity:0.5;cursor:not-allowed;}
 
     <select id="paymentMethod">
       <option value="">Select Payment Method</option>
-      <option value="Easypaisa">Easypaisa (Anas Abbas)</option>
-      <option value="Nayapay">Nayapay (Anas Abbas)</option>
-      <option value="Upaisa">Upaisa (Hazrat Hussain)</option>
+      <option value="Easypaisa">Easypaisa</option>
+      <option value="Upaisa">Upaisa</option>
+      <option value="Nayapay">Nayapay</option>
     </select>
     
     <div id="paymentInfo" style="margin-bottom:10px;"></div>
 
-    <button id="paymentProofBtn">Send Payment Proof via WhatsApp & Generate Tickets</button>
-
+    <button id="payBtn">Send Payment via WhatsApp & Confirm Tickets</button>
     <p id="statusMsg" style="color:#00ffd5;font-weight:600;"></p>
-
-    <h3>Search My Tickets</h3>
-    <input id="searchPhone" type="tel" placeholder="Enter WhatsApp Number to Search">
-    <button id="searchBtn">Search</button>
 
     <div class="ticket-box" id="ticketBox">
       <h3>Your Tickets</h3>
       <p><strong>Name:</strong> <span id="tName"></span></p>
       <p><strong>WhatsApp:</strong> <span id="tPhone"></span></p>
       <p><strong>Tickets:</strong> <span id="tIds"></span></p>
-      <a class="whatsapp" href="https://wa.me/+923409909351" target="_blank">Contact Organizer</a>
       <a class="whatsapp" id="shareWhatsApp" target="_blank">Share Payment on WhatsApp</a>
     </div>
+
+    <button id="contactOrganizer">Contact Organizer on WhatsApp</button>
+    <p style="margin-top:10px;font-size:0.9rem;opacity:0.8;">Everyone will receive rewards through online banking app.</p>
   </div>
 </div>
 
 <footer>© 2025 Lucky Draw. All Rights Reserved.</footer>
 
 <script>
-// Persistent storage
-let ticketsData = JSON.parse(localStorage.getItem('luckyDrawTickets') || {});
+// Payment numbers with account holder
+const paymentNumbers = {
+  Easypaisa: {number:'03409909351', holder:'Anas Abbas'},
+  Upaisa: {number:'03305586587', holder:'Anas Abbas'},
+  Nayapay: {number:'03305586587', holder:'Anas Abbas'}
+};
 
-// Update total cost
+// Organizer WhatsApp
+const organizerNumber = '923409909351'; // Your WhatsApp number with country code
+
+// Update total
 const ticketsInput = document.getElementById('tickets');
 const totalDisplay = document.getElementById('total');
 ticketsInput.addEventListener('input',()=>{
@@ -79,47 +82,24 @@ ticketsInput.addEventListener('input',()=>{
   totalDisplay.textContent='Total: Rs '+(val*10);
 });
 
-// Payment numbers and owners
+// Show payment info
 const paymentMethod = document.getElementById('paymentMethod');
 const paymentInfo = document.getElementById('paymentInfo');
-const paymentNumbers = {
-  "Easypaisa":"+923409909351",
-  "Nayapay":"03305586587",
-  "Upaisa":"03329066311"
-};
-const paymentOwners = {
-  "Easypaisa":"Anas Abbas",
-  "Nayapay":"Anas Abbas",
-  "Upaisa":"Hazrat Hussain"
-};
 paymentMethod.addEventListener('change',()=>{
-  const method = paymentMethod.value;
-  if(method){
-    paymentInfo.innerHTML=`Send payment via <strong>${method}</strong> (${paymentOwners[method]}) to number: <strong>${paymentNumbers[method]}</strong>`;
+  if(paymentMethod.value){
+    const data = paymentNumbers[paymentMethod.value];
+    paymentInfo.innerHTML=`Send payment via <strong>${paymentMethod.value}</strong> to <strong>${data.holder}</strong>: <strong>${data.number}</strong>`;
   } else paymentInfo.innerHTML='';
 });
 
-// Generate random tickets
-function generateTickets(count){
-  let arr=[];
-  for(let i=0;i<count;i++) arr.push('T'+Math.floor(100000+Math.random()*900000));
-  return arr;
-}
+// Contact organizer button
+document.getElementById('contactOrganizer').addEventListener('click',()=>{
+    const waURL = `https://wa.me/${organizerNumber}`;
+    window.open(waURL,'_blank');
+});
 
-// Show tickets
-function showTickets(data, phone){
-  document.getElementById('tName').textContent = data.name;
-  document.getElementById('tPhone').textContent = phone;
-  document.getElementById('tIds').textContent = data.tickets.join(', ');
-  document.getElementById('ticketBox').style.display='block';
-
-  const msg = `I have sent payment via ${data.method} for Lucky Draw. Name: ${data.name}, Tickets: ${data.tickets.length}.`;
-  document.getElementById('shareWhatsApp').href=`https://wa.me/${paymentNumbers[data.method]}?text=${encodeURIComponent(msg)}`;
-  document.getElementById('shareWhatsApp').textContent='Share Payment on WhatsApp';
-}
-
-// Payment Proof & Generate Tickets
-document.getElementById('paymentProofBtn').addEventListener('click',()=>{
+// Handle payment & confirm tickets
+document.getElementById('payBtn').addEventListener('click',()=>{
   const name = document.getElementById('name').value.trim();
   const phone = document.getElementById('phone').value.trim();
   const count = Number(document.getElementById('tickets').value);
@@ -130,34 +110,22 @@ document.getElementById('paymentProofBtn').addEventListener('click',()=>{
     return;
   }
 
-  // Open WhatsApp with pre-filled message
-  const msg = `I have sent payment via ${method} for Lucky Draw. Name: ${name}, Tickets: ${count}. Please attach payment screenshot.`;
-  window.open(`https://wa.me/${paymentNumbers[method]}?text=${encodeURIComponent(msg)}`, '_blank');
+  // Show ticket box with count only
+  document.getElementById('ticketBox').style.display = 'block';
+  document.getElementById('tName').textContent = name;
+  document.getElementById('tPhone').textContent = phone;
+  document.getElementById('tIds').textContent = `${count} tickets purchased`;
 
-  // Generate tickets only once per this purchase
-  const newTickets = generateTickets(count);
+  // Pre-fill WhatsApp message to organizer
+  const msg = `Payment Confirmation:\nName: ${name}\nWhatsApp: ${phone}\nTickets: ${count}\nPayment via: ${method} (${paymentNumbers[method].holder})\nPlease check the screenshot attached.`;
+  const waURL = `https://wa.me/${organizerNumber}?text=${encodeURIComponent(msg)}`;
+  document.getElementById('shareWhatsApp').href = waURL;
+  document.getElementById('shareWhatsApp').textContent = 'Send Payment Confirmation on WhatsApp';
 
-  if(ticketsData[phone]){
-    ticketsData[phone].tickets = ticketsData[phone].tickets.concat(newTickets);
-  } else {
-    ticketsData[phone] = {name: name, tickets: newTickets, method: method};
-  }
+  // Open WhatsApp automatically
+  window.open(waURL, '_blank');
 
-  localStorage.setItem('luckyDrawTickets', JSON.stringify(ticketsData));
-
-  showTickets(ticketsData[phone], phone);
-  document.getElementById('statusMsg').textContent=`${count} ticket(s) generated successfully!`;
-});
-
-// Search tickets
-document.getElementById('searchBtn').addEventListener('click',()=>{
-  const phone = document.getElementById('searchPhone').value.trim();
-  if(!phone){ alert('Enter WhatsApp number to search'); return; }
-  if(ticketsData[phone]){
-    showTickets(ticketsData[phone], phone);
-  } else {
-    alert('No tickets found for this number.');
-  }
+  document.getElementById('statusMsg').textContent='Tickets confirmed! Please send payment screenshot via WhatsApp.';
 });
 </script>
 </body>
