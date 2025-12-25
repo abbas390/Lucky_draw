@@ -1,140 +1,373 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rs 10 Lucky Draw</title>
-<style>
-body {margin:0; font-family:'Segoe UI',Tahoma,sans-serif; background:radial-gradient(circle at top,#1a2a3a,#0b141e 70%); color:#fff;}
-header {padding:30px; text-align:center;}
-header h1 {color:#ffd700; font-size:2.5rem; margin-bottom:5px;}
-header p {opacity:.8; font-size:1rem;}
-.container {max-width:900px; margin:auto; padding:20px;}
-.card {background:rgba(255,255,255,0.05); padding:25px; border-radius:20px; margin-bottom:25px; box-shadow:0 10px 30px rgba(0,0,0,0.5);}
-input,button,select {padding:12px; border-radius:12px; border:none; font-size:1rem; margin-bottom:10px;}
-input,select {width:100%;}
-button {cursor:pointer; background:linear-gradient(135deg,#ffd700,#ffea00); color:#000; font-weight:bold;}
-button:hover {opacity:.9;}
-.total {text-align:center; color:#00ffd5; font-weight:600; margin-bottom:10px;}
-.ticket-box {margin-top:15px; background:linear-gradient(135deg,#ffd700,#ffb700); padding:15px; border-radius:15px; display:none;}
-.ticket-box h3 {margin:5px 0;}
-.whatsapp {display:inline-block; margin-top:10px; padding:10px 18px; background:#25D366; color:#fff; text-decoration:none; border-radius:10px; font-weight:600; margin-right:10px;}
-footer {text-align:center; padding:20px; font-size:0.9rem; opacity:0.8;}
-.confirmBtn {background:#00ffd5;color:#000;margin-top:10px;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Online Trusted Lucky Draw</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #25D366, #128C7E);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .whatsapp-button-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            border: 2px dashed #25D366;
+        }
+        
+        .whatsapp-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #25D366;
+            color: white;
+            padding: 18px 35px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .whatsapp-button:hover {
+            background-color: #128C7E;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+        }
+        
+        .whatsapp-button:active {
+            transform: translateY(0);
+        }
+        
+        .whatsapp-button i {
+            font-size: 1.8rem;
+            margin-right: 12px;
+        }
+        
+        .button-text {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        .ticket-details {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .ticket-details h2 {
+            color: #128C7E;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .detail-value {
+            font-weight: bold;
+            color: #128C7E;
+        }
+        
+        .urgency-banner {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 25px 0;
+            border-left: 5px solid #f44336;
+        }
+        
+        .urgency-banner i {
+            margin-right: 10px;
+        }
+        
+        .security-note {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 25px;
+            border-left: 5px solid #4caf50;
+        }
+        
+        .security-note i {
+            margin-right: 10px;
+        }
+        
+        .how-it-works {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f0f7ff;
+            border-radius: 15px;
+        }
+        
+        .how-it-works h3 {
+            color: #128C7E;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .step {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            padding: 15px;
+            margin: 10px;
+        }
+        
+        .step-number {
+            background-color: #25D366;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #777;
+            font-size: 0.9rem;
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .whatsapp-button {
+                padding: 15px 25px;
+                font-size: 1.1rem;
+            }
+            
+            .steps {
+                flex-direction: column;
+            }
+            
+            .step {
+                margin: 10px 0;
+            }
+        }
+    </style>
 </head>
 <body>
-<header>
-<h1>🎟 Rs 10 Lucky Draw</h1>
-<p>Buy tickets via Easypaisa, Upaisa, or Nayapay and get your lucky numbers!</p>
-</header>
-
-<div class="container">
-  <div class="card">
-    <h2>Buy Tickets</h2>
-    <input id="name" type="text" placeholder="Full Name">
-    <input id="phone" type="tel" placeholder="WhatsApp Number">
-    <input id="tickets" type="number" placeholder="Number of Tickets" min="1">
-    <div class="total" id="total">Total: Rs 0</div>
-
-    <select id="paymentMethod">
-      <option value="">Select Payment Method</option>
-      <option value="Easypaisa">Easypaisa</option>
-      <option value="Upaisa">Upaisa</option>
-      <option value="Nayapay">Nayapay</option>
-    </select>
-    
-    <div id="paymentInfo" style="margin-bottom:10px;"></div>
-
-    <button id="payBtn">Send Payment via WhatsApp</button>
-    <p id="statusMsg" style="color:#00ffd5;font-weight:600;"></p>
-
-    <div class="ticket-box" id="ticketBox">
-      <h3>Your Tickets</h3>
-      <p><strong>Name:</strong> <span id="tName"></span></p>
-      <p><strong>WhatsApp:</strong> <span id="tPhone"></span></p>
-      <p><strong>Tickets:</strong> <span id="tIds"></span></p>
+    <div class="container">
+        <div class="header">
+            <h1>New Online Trusted Lucky Draw</h1>
+            <p>Participate in our exclusive lucky draw for a chance to win amazing prizes!</p>
+        </div>
+        
+        <div class="content">
+            <div class="button-text">
+                <p>If you want to buy lucky draw tickets, click on the button below 👇</p>
+            </div>
+            
+            <div class="whatsapp-button-container">
+                <button class="whatsapp-button" id="whatsappButton">
+                    <i class="fab fa-whatsapp"></i> Buy Lucky Draw Tickets on WhatsApp
+                </button>
+                <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+                    Clicking will open WhatsApp with a pre-filled message
+                </p>
+            </div>
+            
+            <div class="urgency-banner">
+                <i class="fas fa-exclamation-circle"></i>
+                <strong>Limited Tickets Available!</strong> Hurry, only 250 tickets available. First come, first served.
+            </div>
+            
+            <div class="ticket-details">
+                <h2><i class="fas fa-ticket-alt"></i> Ticket Details</h2>
+                
+                <div class="detail-row">
+                    <div class="detail-label">Ticket Price:</div>
+                    <div class="detail-value">175 PKR per ticket</div>
+                </div>
+                
+                <div class="detail-row">
+                    <div class="detail-label">Lucky Draw Date:</div>
+                    <div class="detail-value" id="drawDate">One month from now</div>
+                </div>
+                
+                <div class="detail-row">
+                    <div class="detail-label">Total Prizes:</div>
+                    <div class="detail-value">5 Amazing Prizes</div>
+                </div>
+                
+                <div class="detail-row">
+                    <div class="detail-label">Payment Method:</div>
+                    <div class="detail-value">EasyPaisa / JazzCash / Bank Transfer</div>
+                </div>
+            </div>
+            
+            <div class="how-it-works">
+                <h3><i class="fas fa-info-circle"></i> How It Works</h3>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h4>Click WhatsApp Button</h4>
+                        <p>Click the green button above to open WhatsApp with our number</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h4>Send Auto Message</h4>
+                        <p>Send the pre-filled message or customize it with your details</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h4>Receive Instructions</h4>
+                        <p>We'll send you payment details and ticket confirmation</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="security-note">
+                <i class="fas fa-shield-alt"></i>
+                All transactions handled securely via WhatsApp. Your payment information is safe with us.
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 Trusted Lucky Draw. All rights reserved.</p>
+            <p>Contact: 0340-9909351 | This is a trusted and verified lucky draw platform.</p>
+        </footer>
     </div>
 
-    <button id="contactOrganizer">Contact Organizer on WhatsApp</button>
-    <button id="confirmTicketsBtn" class="confirmBtn">Confirm Tickets (Organizer Only)</button>
-    <p style="margin-top:10px;font-size:0.9rem;opacity:0.8;">Everyone will receive rewards through online banking app.</p>
-  </div>
-</div>
-
-<footer>© 2025 Lucky Draw. All Rights Reserved.</footer>
-
-<script>
-// Payment numbers with account holder
-const paymentNumbers = {
-  Easypaisa: {number:'03409909351', holder:'Anas Abbas'},
-  Upaisa: {number:'03305586587', holder:'Anas Abbas'},
-  Nayapay: {number:'03305586587', holder:'Anas Abbas'}
-};
-
-// Organizer WhatsApp
-const organizerNumber = '923409909351'; // WhatsApp number with country code
-
-// Update total
-const ticketsInput = document.getElementById('tickets');
-const totalDisplay = document.getElementById('total');
-ticketsInput.addEventListener('input',()=>{
-  const val = Number(ticketsInput.value)||0;
-  totalDisplay.textContent='Total: Rs '+(val*10);
-});
-
-// Show payment info
-const paymentMethod = document.getElementById('paymentMethod');
-const paymentInfo = document.getElementById('paymentInfo');
-paymentMethod.addEventListener('change',()=>{
-  if(paymentMethod.value){
-    const data = paymentNumbers[paymentMethod.value];
-    paymentInfo.innerHTML=`Send payment via <strong>${paymentMethod.value}</strong> to <strong>${data.holder}</strong>: <strong>${data.number}</strong>`;
-  } else paymentInfo.innerHTML='';
-});
-
-// Contact organizer button
-document.getElementById('contactOrganizer').addEventListener('click',()=>{
-    const waURL = `https://wa.me/${organizerNumber}`;
-    window.open(waURL,'_blank');
-});
-
-// Handle payment (just send WhatsApp, no ticket shown yet)
-document.getElementById('payBtn').addEventListener('click',()=>{
-  const name = document.getElementById('name').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const count = Number(document.getElementById('tickets').value);
-  const method = document.getElementById('paymentMethod').value;
-
-  if(!name || !phone || !count || !method){
-    alert('Please fill all fields and select payment method');
-    return;
-  }
-
-  const msg = `Payment Confirmation:\nName: ${name}\nWhatsApp: ${phone}\nTickets: ${count}\nPayment via: ${method} (${paymentNumbers[method].holder})\nPlease check the screenshot attached.`;
-  const waURL = `https://wa.me/${organizerNumber}?text=${encodeURIComponent(msg)}`;
-  window.open(waURL,'_blank');
-
-  document.getElementById('statusMsg').textContent='Please send payment screenshot via WhatsApp. Tickets will be confirmed after payment is received.';
-});
-
-// Confirm tickets (organizer manually triggers)
-document.getElementById('confirmTicketsBtn').addEventListener('click',()=>{
-  const name = document.getElementById('name').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const count = Number(document.getElementById('tickets').value);
-
-  if(!name || !phone || !count){
-    alert('Cannot confirm tickets. Missing data.');
-    return;
-  }
-
-  document.getElementById('ticketBox').style.display='block';
-  document.getElementById('tName').textContent=name;
-  document.getElementById('tPhone').textContent=phone;
-  document.getElementById('tIds').textContent=`${count} tickets purchased`;
-  document.getElementById('statusMsg').textContent='Tickets confirmed! 🎉';
-});
-</script>
+    <script>
+        // Set the actual draw date (one month from today)
+        function setDrawDate() {
+            const today = new Date();
+            const oneMonthLater = new Date(today.setMonth(today.getMonth() + 1));
+            
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = oneMonthLater.toLocaleDateString('en-US', options);
+            
+            document.getElementById('drawDate').textContent = formattedDate;
+        }
+        
+        // WhatsApp button functionality
+        document.getElementById('whatsappButton').addEventListener('click', function() {
+            const phoneNumber = "03409909351";
+            const message = "I want to buy lucky draw tickets please explain the procedure";
+            
+            // Encode the message for URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Create WhatsApp URL
+            const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            
+            // Open WhatsApp in a new tab
+            window.open(whatsappURL, '_blank');
+        });
+        
+        // Initialize the page
+        window.onload = function() {
+            setDrawDate();
+            
+            // Add animation to the button
+            const button = document.getElementById('whatsappButton');
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        };
+    </script>
 </body>
 </html>
